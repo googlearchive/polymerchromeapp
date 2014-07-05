@@ -1,40 +1,21 @@
-<a target="_blank" href="https://chrome.google.com/webstore/detail/nmfpplkdkcbhediajmbhljkafnlahcda">![Try it now in CWS](https://raw.github.com/GoogleChrome/chrome-app-samples/master/tryitnowbutton.png "Click here to install this sample from the Chrome Web Store")</a>
+<a target="_blank" href="https://chrome.google.com/webstore/detail/figjlmomjacpejcemmmfkhnpmndikhcn">![Try it now in CWS](https://raw.github.com/GoogleChrome/chrome-app-samples/master/tryitnowbutton.png "Click here to install this sample from the Chrome Web Store")</a>
 
 
-# Hello World
+# Polymer Chrome App
 
-This is a starter application. It contains a basic manifest file with no
-additional permissions. The manifest denotes a background script, main.js,
-detailed below:
+This is starter application based on Polymer Library published by Google. 
 
-```javascript
-chrome.app.runtime.onLaunched.addListener(function() {
-  // Center window on screen.
-  var screenWidth = screen.availWidth;
-  var screenHeight = screen.availHeight;
-  var width = 500;
-  var height = 300;
+In order to build the project to work with Chrome Apps, use `vulcanize` tool (`sudo npm install -g vulcanize`). To build run the following command, after every edit:
 
-  chrome.app.window.create('index.html', {
-    id: "helloWorldID",
-    bounds: {
-      width: width,
-      height: height,
-      left: Math.round((screenWidth-width)/2),
-      top: Math.round((screenHeight-height)/2)
-    }
-  });
-});
-```
+`vulcanize --csp -o build.html index.html`
 
-This simply waits for the launch event for the application (`chrome.app.runtime.onLaunched.addListener`)
-and, at that point, creates a window using a basic HTML page, index.html, as the source.
+I have heard that `vulcanize` will be available in Chrome Dev Editor by default later on.
 
 ## Resources
 
-* [Runtime](http://developer.chrome.com/apps/app.runtime.html)
-* [Window](http://developer.chrome.com/apps/app.window.html)
+* [Chrome App](http://developer.chrome.com/apps)
+* [Polymer Project](http://www.polymer-project.org/)
      
 ## Screenshot
-![screenshot](https://raw.github.com/GoogleChrome/chrome-app-samples/master/hello-world/assets/screenshot_1280_800.png)
+![screenshot](https://raw.githubusercontent.com/vikasprogrammer/polymerchromeapp/master/assets/screenshot_1280_800.png)
 
