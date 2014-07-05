@@ -57,7 +57,14 @@
       <post-list show="all"></post-list>
     </div>
   </core-header-panel>
+ <script>
+  var list = document.querySelector('post-list');
+  var tabs = document.querySelector('paper-tabs');
 
+  tabs.addEventListener('core-select', function() {
+    list.show = tabs.selected;
+  });
+  </script>
   
 </body>
 
