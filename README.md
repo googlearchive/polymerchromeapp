@@ -11,6 +11,8 @@ In order to build the project to work with Chrome Apps, use `vulcanize` tool (`s
 
 I have heard that `vulcanize` will be available in Chrome Dev Editor by default later on.
 
+To install the project in your Chrome installation - Goto [Extensions](chrome://extensions/) > Load Unpacked extension and point to clone of this git or Just drag and drop the folder to the extension view.
+
 ## Resources
 
 * [Chrome App](http://developer.chrome.com/apps)
