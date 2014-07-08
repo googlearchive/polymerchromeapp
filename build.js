@@ -100,6 +100,8 @@
         if (tallMode[this.mode]) {
           header.classList.toggle(this.tallClass, atTop);
         }
+        
+        header.classList.toggle('animate', tallMode[this.mode]);
       }
     }
 
@@ -541,7 +543,8 @@
       var touchUp = touchUpMs / 1000;
       var totalElapsed = touchDown + touchUp;
       var ww = anim.width, hh = anim.height;
-      var waveRadius = Math.min(Math.max(ww, hh), waveMaxRadius) * 1.1 + 5;
+      // use diagonal size of container to avoid floating point math sadness
+      var waveRadius = Math.min(Math.sqrt(ww * ww + hh * hh), waveMaxRadius) * 1.1 + 5;
       var duration = 1.1 - .2 * (waveRadius / waveMaxRadius);
       var tt = (totalElapsed / duration);
 
@@ -604,7 +607,7 @@
     //
     // DRAWING
     //
-    function drawRipple(ctx, x, y, radius, innerColor, outerColor, innerColorAlpha, outerColorAlpha) {
+    function drawRipple(ctx, x, y, radius, innerColor, outerColor) {
       if (outerColor) {
         ctx.fillStyle = outerColor;
         ctx.fillRect(0,0,ctx.canvas.width, ctx.canvas.height);
@@ -697,6 +700,20 @@
       eventDelegates: {
         down: 'downAction',
         up: 'upAction'
+      },
+
+      attached: function() {
+        // create the canvas element manually becase ios
+        // does not render the canvas element if it is not created in the
+        // main document (component templates are created in a
+        // different document). See:
+        // https://bugs.webkit.org/show_bug.cgi?id=109073.
+        if (!this.$.canvas) {
+          var canvas = document.createElement('canvas');
+          canvas.id = 'canvas';
+          this.shadowRoot.appendChild(canvas);
+          this.$.canvas = canvas;
+        }
       },
 
       ready: function() {
@@ -1037,275 +1054,288 @@
   ;
 
 
-    Polymer('core-ajax', {
-      /**
-       * Fired when a response is received.
-       * 
-       * @event core-response
-       */
- 
-      /**
-       * Fired when an error is received.
-       * 
-       * @event core-error
-       */
- 
-      /**
-       * Fired whenever a response or an error is received.
-       *
-       * @event core-complete
-       */
+  Polymer('core-ajax', {
+    /**
+     * Fired when a response is received.
+     * 
+     * @event core-response
+     */
 
-      /**
-       * The URL target of the request.
-       * 
-       * @attribute url
-       * @type string
-       * @default ''
-       */
-      url: '',
+    /**
+     * Fired when an error is received.
+     * 
+     * @event core-error
+     */
 
-      /**
-       * Specifies what data to store in the `response` property, and
-       * to deliver as `event.response` in `response` events.
-       * 
-       * One of:
-       * 
-       *    `text`: uses `XHR.responseText`.
-       *    
-       *    `xml`: uses `XHR.responseXML`.
-       *    
-       *    `json`: uses `XHR.responseText` parsed as JSON.
-       *
-       *    `arraybuffer`: uses `XHR.response`.
-       *
-       *    `blob`: uses `XHR.response`.
-       *
-       *    `document`: uses `XHR.response`.
-       *  
-       * @attribute handleAs
-       * @type string
-       * @default 'text'
-       */
-      handleAs: '',
+    /**
+     * Fired whenever a response or an error is received.
+     *
+     * @event core-complete
+     */
 
-      /**
-       * If true, automatically performs an Ajax request when either `url` or `params` changes.
-       *
-       * @attribute auto
-       * @type boolean
-       * @default false
-       */
-      auto: false,
+    /**
+     * The URL target of the request.
+     * 
+     * @attribute url
+     * @type string
+     * @default ''
+     */
+    url: '',
 
-      /**
-       * Parameters to send to the specified URL, as JSON.
-       *  
-       * @attribute params
-       * @type string (JSON)
-       * @default ''
-       */
-      params: '',
+    /**
+     * Specifies what data to store in the `response` property, and
+     * to deliver as `event.response` in `response` events.
+     * 
+     * One of:
+     * 
+     *    `text`: uses `XHR.responseText`.
+     *    
+     *    `xml`: uses `XHR.responseXML`.
+     *    
+     *    `json`: uses `XHR.responseText` parsed as JSON.
+     *
+     *    `arraybuffer`: uses `XHR.response`.
+     *
+     *    `blob`: uses `XHR.response`.
+     *
+     *    `document`: uses `XHR.response`.
+     *  
+     * @attribute handleAs
+     * @type string
+     * @default 'text'
+     */
+    handleAs: '',
 
-      /**
-       * Returns the response object.
-       *
-       * @attribute response
-       * @type Object
-       * @default null
-       */
-      response: null,
+    /**
+     * If true, automatically performs an Ajax request when either `url` or `params` changes.
+     *
+     * @attribute auto
+     * @type boolean
+     * @default false
+     */
+    auto: false,
 
-      /**
-       * The HTTP method to use such as 'GET', 'POST', 'PUT', or 'DELETE'.
-       * Default is 'GET'.
-       *
-       * @attribute method
-       * @type string
-       * @default ''
-       */
-      method: '',
+    /**
+     * Parameters to send to the specified URL, as JSON.
+     *  
+     * @attribute params
+     * @type string (JSON)
+     * @default ''
+     */
+    params: '',
 
-      /**
-       * HTTP request headers to send.
-       *
-       * Example:
-       *
-       *     <core-ajax 
-       *         auto
-       *         url="http://somesite.com"
-       *         headers='{"X-Requested-With": "XMLHttpRequest"}'
-       *         handleAs="json"
-       *         on-core-response="{{handleResponse}}"></core-ajax>
-       *  
-       * @attribute headers
-       * @type Object
-       * @default null
-       */
-      headers: null,
+    /**
+     * Returns the response object.
+     *
+     * @attribute response
+     * @type Object
+     * @default null
+     */
+    response: null,
 
-      /**
-       * Optional raw body content to send when method === "POST".
-       *
-       * Example:
-       *
-       *     <core-ajax method="POST" auto url="http://somesite.com"
-       *         body='{"foo":1, "bar":2}'>
-       *     </core-ajax>
-       *  
-       * @attribute body
-       * @type Object
-       * @default null
-       */
-      body: null,
+    /**
+     * The HTTP method to use such as 'GET', 'POST', 'PUT', or 'DELETE'.
+     * Default is 'GET'.
+     *
+     * @attribute method
+     * @type string
+     * @default ''
+     */
+    method: '',
 
-      /**
-       * Content type to use when sending data.
-       *
-       * @attribute contentType
-       * @type string
-       * @default 'application/x-www-form-urlencoded'
-       */
-      contentType: 'application/x-www-form-urlencoded',
+    /**
+     * HTTP request headers to send.
+     *
+     * Example:
+     *
+     *     <core-ajax 
+     *         auto
+     *         url="http://somesite.com"
+     *         headers='{"X-Requested-With": "XMLHttpRequest"}'
+     *         handleAs="json"
+     *         on-core-response="{{handleResponse}}"></core-ajax>
+     *  
+     * @attribute headers
+     * @type Object
+     * @default null
+     */
+    headers: null,
 
-      /**
-       * Set the withCredentials flag on the request.
-       * 
-       * @attribute withCredentials
-       * @type boolean
-       * @default false
-       */
-      withCredentials: false,
-      
-      ready: function() {
-        this.xhr = document.createElement('core-xhr');
-      },
+    /**
+     * Optional raw body content to send when method === "POST".
+     *
+     * Example:
+     *
+     *     <core-ajax method="POST" auto url="http://somesite.com"
+     *         body='{"foo":1, "bar":2}'>
+     *     </core-ajax>
+     *  
+     * @attribute body
+     * @type Object
+     * @default null
+     */
+    body: null,
 
-      receive: function(response, xhr) {
-        if (this.isSuccess(xhr)) {
-          this.processResponse(xhr);
-        } else {
-          this.error(xhr);
-        }
-        this.complete(xhr);
-      },
+    /**
+     * Content type to use when sending data.
+     *
+     * @attribute contentType
+     * @type string
+     * @default 'application/x-www-form-urlencoded'
+     */
+    contentType: 'application/x-www-form-urlencoded',
 
-      isSuccess: function(xhr) {
-        var status = xhr.status || 0;
-        return !status || (status >= 200 && status < 300);
-      },
+    /**
+     * Set the withCredentials flag on the request.
+     * 
+     * @attribute withCredentials
+     * @type boolean
+     * @default false
+     */
+    withCredentials: false,
+    
+    /**
+     * Additional properties to send to core-xhr.
+     *
+     * Can be set to an object containing default properties
+     * to send as arguments to the `core-xhr.request()` method
+     * which implements the low-level communication.
+     * 
+     * @property xhrArgs
+     * @type Object
+     * @default null
+     */
+    xhrArgs: null,
+     
+    ready: function() {
+      this.xhr = document.createElement('core-xhr');
+    },
 
-      processResponse: function(xhr) {
-        var response = this.evalResponse(xhr);
-        this.response = response;
-        this.fire('core-response', {response: response, xhr: xhr});
-      },
-
-      error: function(xhr) {
-        var response = xhr.status + ': ' + xhr.responseText;
-        this.fire('core-error', {response: response, xhr: xhr});
-      },
-
-      complete: function(xhr) {
-        this.fire('core-complete', {response: xhr.status, xhr: xhr});
-      },
-
-      evalResponse: function(xhr) {
-        return this[(this.handleAs || 'text') + 'Handler'](xhr);
-      },
-
-      xmlHandler: function(xhr) {
-        return xhr.responseXML;
-      },
-
-      textHandler: function(xhr) {
-        return xhr.responseText;
-      },
-
-      jsonHandler: function(xhr) {
-        var r = xhr.responseText;
-        try {
-          return JSON.parse(r);
-        } catch (x) {
-          return r;
-        }
-      },
-
-      documentHandler: function(xhr) {
-        return xhr.response;
-      },
-
-      blobHandler: function(xhr) {
-        return xhr.response;
-      },
-
-      arraybufferHandler: function(xhr) {
-        return xhr.response;
-      },
-
-      urlChanged: function() {
-        if (!this.handleAs) {
-          var ext = String(this.url).split('.').pop();
-          switch (ext) {
-            case 'json':
-              this.handleAs = 'json';
-              break;
-          }
-        }
-        this.autoGo();
-      },
-
-      paramsChanged: function() {
-        this.autoGo();
-      },
-
-      autoChanged: function() {
-        this.autoGo();
-      },
-
-      // TODO(sorvell): multiple side-effects could call autoGo 
-      // during one micro-task, use a job to have only one action 
-      // occur
-      autoGo: function() {
-        if (this.auto) {
-          this.goJob = this.job(this.goJob, this.go, 0);
-        }
-      },
-
-      /**
-       * Performs an Ajax request to the specified URL.
-       *
-       * @method go
-       */
-      go: function() {
-        var args = this.xhrArgs || {};
-        // TODO(sjmiles): we may want XHR to default to POST if body is set
-        args.body = this.body || args.body;
-        args.params = this.params || args.params;
-        if (args.params && typeof(args.params) == 'string') {
-          args.params = JSON.parse(args.params);
-        }
-        args.headers = this.headers || args.headers || {};
-        if (args.headers && typeof(args.headers) == 'string') {
-          args.headers = JSON.parse(args.headers);
-        }
-        if (this.contentType) {
-          args.headers['content-type'] = this.contentType;
-        }
-        if (this.handleAs === 'arraybuffer' || this.handleAs === 'blob' ||
-            this.handleAs === 'document') {
-          args.responseType = this.handleAs;
-        }
-        args.withCredentials = this.withCredentials;
-        args.callback = this.receive.bind(this);
-        args.url = this.url;
-        args.method = this.method;
-        return args.url && this.xhr.request(args);
+    receive: function(response, xhr) {
+      if (this.isSuccess(xhr)) {
+        this.processResponse(xhr);
+      } else {
+        this.error(xhr);
       }
+      this.complete(xhr);
+    },
 
-    });
+    isSuccess: function(xhr) {
+      var status = xhr.status || 0;
+      return !status || (status >= 200 && status < 300);
+    },
 
-  ;
+    processResponse: function(xhr) {
+      var response = this.evalResponse(xhr);
+      this.response = response;
+      this.fire('core-response', {response: response, xhr: xhr});
+    },
+
+    error: function(xhr) {
+      var response = xhr.status + ': ' + xhr.responseText;
+      this.fire('core-error', {response: response, xhr: xhr});
+    },
+
+    complete: function(xhr) {
+      this.fire('core-complete', {response: xhr.status, xhr: xhr});
+    },
+
+    evalResponse: function(xhr) {
+      return this[(this.handleAs || 'text') + 'Handler'](xhr);
+    },
+
+    xmlHandler: function(xhr) {
+      return xhr.responseXML;
+    },
+
+    textHandler: function(xhr) {
+      return xhr.responseText;
+    },
+
+    jsonHandler: function(xhr) {
+      var r = xhr.responseText;
+      try {
+        return JSON.parse(r);
+      } catch (x) {
+        return r;
+      }
+    },
+
+    documentHandler: function(xhr) {
+      return xhr.response;
+    },
+
+    blobHandler: function(xhr) {
+      return xhr.response;
+    },
+
+    arraybufferHandler: function(xhr) {
+      return xhr.response;
+    },
+
+    urlChanged: function() {
+      if (!this.handleAs) {
+        var ext = String(this.url).split('.').pop();
+        switch (ext) {
+          case 'json':
+            this.handleAs = 'json';
+            break;
+        }
+      }
+      this.autoGo();
+    },
+
+    paramsChanged: function() {
+      this.autoGo();
+    },
+
+    autoChanged: function() {
+      this.autoGo();
+    },
+
+    // TODO(sorvell): multiple side-effects could call autoGo 
+    // during one micro-task, use a job to have only one action 
+    // occur
+    autoGo: function() {
+      if (this.auto) {
+        this.goJob = this.job(this.goJob, this.go, 0);
+      }
+    },
+
+    /**
+     * Performs an Ajax request to the specified URL.
+     *
+     * @method go
+     */
+    go: function() {
+      var args = this.xhrArgs || {};
+      // TODO(sjmiles): we may want XHR to default to POST if body is set
+      args.body = this.body || args.body;
+      args.params = this.params || args.params;
+      if (args.params && typeof(args.params) == 'string') {
+        args.params = JSON.parse(args.params);
+      }
+      args.headers = this.headers || args.headers || {};
+      if (args.headers && typeof(args.headers) == 'string') {
+        args.headers = JSON.parse(args.headers);
+      }
+      if (this.contentType) {
+        args.headers['content-type'] = this.contentType;
+      }
+      if (this.handleAs === 'arraybuffer' || this.handleAs === 'blob' ||
+          this.handleAs === 'document') {
+        args.responseType = this.handleAs;
+      }
+      args.withCredentials = this.withCredentials;
+      args.callback = this.receive.bind(this);
+      args.url = this.url;
+      args.method = this.method;
+      return args.url && this.xhr.request(args);
+    }
+
+  });
+
+;
 
   Polymer('post-service', {
     created: function() {
@@ -1569,8 +1599,8 @@
        * @param {Number} scale (optional, defaults to 1) A scaling factor 
        * with which the icon can be magnified.
        */
-      applyIcon: function(element, icon, theme, scale) {
-         var offset = this.getOffset(icon, theme);
+      applyIcon: function(element, icon, scale) {
+         var offset = this.getOffset(icon);
          scale = scale || 1;
          if (element && offset) {
            var style = element.style;
@@ -1623,17 +1653,17 @@
      */
     icon: '',
 
+    observe: {
+      'size icon': 'updateIcon'
+    },
+
     defaultIconset: 'icons',
 
     ready: function() {
       if (!meta) {
         meta = document.createElement('core-iconset');
       }
-      this.sizeChanged();
-    },
-
-    sizeChanged: function() {
-      this.style.width = this.style.height = this.size + 'px';
+      this.updateIcon();
     },
 
     srcChanged: function() {
@@ -1646,14 +1676,17 @@
       return meta.byId(name || this.defaultIconset);
     },
 
-    iconChanged: function() {
+    updateIcon: function() {
+      if (this.size) {
+        this.style.width = this.style.height = this.size + 'px';
+      }
       if (this.icon) {
         var parts = String(this.icon).split(':');
         var icon = parts.pop();
         if (icon) {
           var set = this.getIconset(parts.pop());
           if (set) {
-            set.applyIcon(this, icon, this.activeTheme, this.size / set.iconSize);
+            set.applyIcon(this, icon, this.size / set.iconSize);
           }
         }
       }
@@ -1664,9 +1697,9 @@
 })();
 ;
 
-  
+
     Polymer('core-iconset-svg', {
-  
+
 
       /**
        * The size of an individual icon. Note that icons must be square.
@@ -1678,15 +1711,24 @@
       iconSize: 24,
       type: 'iconset',
 
+      created: function() {
+        this._icons = {};
+      },
+
+      ready: function() {
+        this.super();
+        this.updateIcons();
+      },
+
       iconById: function(id) {
-        return this.querySelector('#' + id);
+        return this._icons[id] || (this._icons[id] = this.querySelector('#' + id));
       },
 
       cloneIcon: function(id) {
         var icon = this.iconById(id);
         if (icon) {
           var content = icon.cloneNode(true);
-          var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+          var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
           svg.setAttribute('viewBox', '0 0 ' + this.iconSize + ' ' +
               this.iconSize);
           // NOTE(dfreedm): work around https://crbug.com/370136
@@ -1719,7 +1761,7 @@
        * applied.
        * @param {String|Number} icon The name the icon to apply.
        */
-      applyIcon: function(element, icon) {
+      applyIcon: function(element, icon, scale) {
         var root = element.shadowRoot || element;
         // remove old
         var old = root.querySelector('svg');
@@ -1731,12 +1773,41 @@
         if (!svg) {
           return;
         }
-        svg.style.height = svg.style.width = this.iconSize + 'px';
-        svg.style.verticalAlign = 'middle';
-        if (svg) {
-          root.insertBefore(svg, root.firstElementChild);
+        var size = scale * this.iconSize;
+        if (size) {
+          svg.style.height = svg.style.width = size + 'px';
+        } else {
+          svg.setAttribute('height', '100%');
+          svg.setAttribute('width', '100%');
+          svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+        }
+        svg.style.display = 'block';
+        root.insertBefore(svg, root.firstElementChild);
+      },
+      
+      /**
+       * Tell users of the iconset, that the set has loaded.
+       * This finds all elements matching the selector argument and calls 
+       * the method argument on them.
+       * @method updateIcons
+       * @param selector {string} css selector to identify iconset users, 
+       * defaults to '[icon]'
+       * @param method {string} method to call on found elements, 
+       * defaults to 'updateIcon'
+       */
+      updateIcons: function(selector, method) {
+        selector = selector || '[icon]';
+        method = method || 'updateIcon';
+        var deep = window.ShadowDOMPolyfill ? '' : 'html /deep/ ';
+        var i$ = document.querySelectorAll(deep + selector);
+        for (var i=0, e; e=i$[i]; i++) {
+          if (e[method]) {
+            e[method].call(e);
+          }
         }
       }
+      
+
     });
 
   ;
