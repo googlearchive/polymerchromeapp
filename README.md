@@ -1,27 +1,30 @@
-<a target="_blank" href="https://chrome.google.com/webstore/detail/figjlmomjacpejcemmmfkhnpmndikhcn">![Try it now in CWS](https://raw.github.com/GoogleChrome/chrome-app-samples/master/tryitnowbutton.png "Click here to install this sample from the Chrome Web Store")</a>
-
-
 # Polymer Chrome App
 
-This is starter application based on Polymer Library published by Google. 
+## Getting Started
 
-In order to build the project to work with Chrome Apps, use `vulcanize` tool (`sudo npm install -g vulcanize`). To build run the following command, after every edit:
+To install the project in your Chrome installation - Goto [Extensions](chrome://extensions/) > Load unpacked extension... and point to a clone of this repo or just drag and drop the folder to the extensions view.
 
-`vulcanize --csp -o build.html index.html`
+## Build
 
-or use the build script
+To build the app run the following commands:
 
-`./build.sh`
+    npm install -g grunt-cli
+    npm install
+    grunt
 
-I have heard that `vulcanize` will be available in Chrome Dev Editor by default later on.
+### Dealing with CSP
 
-To install the project in your Chrome installation - Goto [Extensions](chrome://extensions/) > Load Unpacked extension and point to clone of this git or Just drag and drop the folder to the extension view.
+Chrome Apps have a strict Content Security Policy (CSP) which prevents inline `script` elements. Using the [Vulcanize tool](www.polymer-project.org/articles/concatenating-web-components.html) with the `--csp` flag, we can strip all of the script elements out of our Polymer elements, and place them in an external `build.js` file.
+
+    vulcanize -o build.html index.html --csp
+
+To make this process easier, we've included the [grunt-vulcanize](https://github.com/Polymer/grunt-vulcanize) task in our Gruntfile. This task will watch for any file changes and re-run the Vulcanize tool for us, making it much faster to develop and test your app.
 
 ## Resources
 
 * [Chrome App](http://developer.chrome.com/apps)
 * [Polymer Project](http://www.polymer-project.org/)
-     
+
 ## Screenshot
 ![screenshot](https://raw.githubusercontent.com/vikasprogrammer/polymerchromeapp/master/assets/screenshot_1280_800.png)
 

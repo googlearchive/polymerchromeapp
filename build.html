@@ -5,17 +5,7 @@
   <title>unquote</title>
   <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
   <script src="components/platform/platform.js"></script>
-  <!--
-Copyright (c) 2014 The Polymer Project Authors. All rights reserved.
-This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
-The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
-The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-Code distributed by Google as part of the polymer project is also
-subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
--->
-<link href="//fonts.googleapis.com/css?family=RobotoDraft:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en" rel="stylesheet" type="text/css">
-
-  <!--
+  <div hidden><!--
 Copyright (c) 2014 The Polymer Project Authors. All rights reserved.
 This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
 The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
@@ -443,8 +433,8 @@ mode: cover
 </template>
 
 </polymer-element>
-
-  <!--
+</div>
+  <div hidden><!--
 Copyright (c) 2014 The Polymer Project Authors. All rights reserved.
 This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
 The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
@@ -642,8 +632,8 @@ polyfill-next-selector { content: ':host .indent'; }
 
 </template>
 </polymer-element>
-
-  <!--
+</div>
+  <div hidden><!--
 Copyright (c) 2014 The Polymer Project Authors. All rights reserved.
 This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
 The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
@@ -1100,8 +1090,8 @@ polyfill-next-selector { content: '#tabsContainer > *:not(#selectionBar)'; }
 </template>
 
 </polymer-element>
-
-  
+</div>
+  <div hidden>
 
 <!--
 Copyright (c) 2014 The Polymer Project Authors. All rights reserved.
@@ -1217,7 +1207,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   @type Array
   @default []
 -->
-<polymer-element name="post-service" attributes="posts" assetpath="post-service/">
+<polymer-element name="post-service" attributes="posts" assetpath="elements/">
   <template>
     <style>
     :host {
@@ -1807,7 +1797,7 @@ core-icon {
 </polymer-element>
 
 
-<polymer-element name="post-card" assetpath="">
+<polymer-element name="post-card" assetpath="elements/">
   <template>
     <style>
     :host {
@@ -1822,13 +1812,13 @@ core-icon {
     .card-header {
       margin-bottom: 10px;
     }
-    polyfill-next-selector { content: ".card-header h2"; }
+    polyfill-next-selector { content: '.card-header h2'; }
     .card-header ::content h2 {
       margin: 0;
       font-size: 1.8rem;
       font-weight: 300;
     }
-    polyfill-next-selector { content: ".card-header img"; }
+    polyfill-next-selector { content: '.card-header img'; }
     .card-header ::content img {
       width: 70px;
       border-radius: 50%;
@@ -1838,8 +1828,6 @@ core-icon {
       position: absolute;
       top: 3px;
       right: 3px;
-    }
-    core-icon-button {
       fill: #636363;
     }
     :host([favorite]) core-icon-button {
@@ -1850,15 +1838,14 @@ core-icon {
       <content select="img"></content>
       <content select="h2"></content>
     </div>
-    <core-icon-button id="favicon" icon="favorite" on-tap="{{favoriteTapped}}">
-    </core-icon-button>
+    <core-icon-button id="favicon" icon="favorite" on-tap="{{favoriteTapped}}"></core-icon-button>
     <content></content>
   </template>
   
 </polymer-element>
 
 
-<polymer-element name="post-list" attributes="show" assetpath="">
+<polymer-element name="post-list" attributes="show" assetpath="elements/">
   <template>
     <style>
     :host {
@@ -1885,7 +1872,7 @@ core-icon {
 
   
 </polymer-element>
-
+</div>
   <style>
   html,body {
     height: 100%;
@@ -1895,20 +1882,27 @@ core-icon {
   }
   core-header-panel {
     height: 100%;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch; 
   }
   core-toolbar {
     background: #03a9f4;
     color: white;
   }
-  paper-tabs {
+  #tabs {
     width: 100%;
+    margin: 0;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
   }
   .container {
     width: 80%;
     margin: 50px auto;
   }
   @media (min-width: 481px) {
-    paper-tabs {
+    #tabs {
       width: 200px;
     }
     .container {
@@ -1918,10 +1912,10 @@ core-icon {
   </style>
 </head>
 
-<body unresolved="">
+<body unresolved="" touch-action="auto">
   <core-header-panel>
     <core-toolbar>
-      <paper-tabs selected="all" valueattr="name" self-end="">
+      <paper-tabs id="tabs" selected="all" valueattr="name" self-end="">
         <paper-tab name="all">ALL</paper-tab>
         <paper-tab name="favorites">FAVORITES</paper-tab>
       </paper-tabs>
@@ -1930,7 +1924,7 @@ core-icon {
       <post-list show="all"></post-list>
     </div>
   </core-header-panel>
- 
+
   
 <script src="build.js"></script></body>
 

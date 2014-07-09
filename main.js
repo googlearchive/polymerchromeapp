@@ -12,7 +12,7 @@ chrome.app.runtime.onLaunched.addListener(function() {
   var height = 800;
 
   chrome.app.window.create('build.html', {
-    id: "helloWorldID",
+    id: "unquote",
     bounds: {
       width: width,
       height: height,

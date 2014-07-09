@@ -1,5 +1,5 @@
-﻿<link rel="import" href="components/polymer/polymer.html">
-<link rel="import" href="components/core-icon-button/core-icon-button.html">
+﻿<link rel="import" href="../components/polymer/polymer.html">
+<link rel="import" href="../components/core-icon-button/core-icon-button.html">
 
 <polymer-element name="post-card">
   <template>
@@ -16,13 +16,13 @@
     .card-header {
       margin-bottom: 10px;
     }
-    polyfill-next-selector { content: ".card-header h2"; }
+    polyfill-next-selector { content: '.card-header h2'; }
     .card-header ::content h2 {
       margin: 0;
       font-size: 1.8rem;
       font-weight: 300;
     }
-    polyfill-next-selector { content: ".card-header img"; }
+    polyfill-next-selector { content: '.card-header img'; }
     .card-header ::content img {
       width: 70px;
       border-radius: 50%;
@@ -32,8 +32,6 @@
       position: absolute;
       top: 3px;
       right: 3px;
-    }
-    core-icon-button {
       fill: #636363;
     }
     :host([favorite]) core-icon-button {
@@ -47,8 +45,7 @@
     <core-icon-button
       id="favicon"
       icon="favorite"
-      on-tap="{{favoriteTapped}}">
-    </core-icon-button>
+      on-tap="{{favoriteTapped}}"></core-icon-button>
     <content></content>
   </template>
   <script>
