@@ -18,7 +18,7 @@ Chrome Apps have a strict Content Security Policy (CSP) which prevents inline `s
 
     vulcanize -o build.html index.html --csp
 
-To make this process easier, we've included the [grunt-vulcanize](https://github.com/Polymer/grunt-vulcanize) task in our Gruntfile. This task will watch for any file changes and re-run the Vulcanize tool for us, making it much faster to develop and test your app.
+To make this process easier, we've included the [grunt-vulcanize](https://github.com/Polymer/grunt-vulcanize) task in our Gruntfile. This task will watch for any file changes and re-run the Vulcanize tool for us, making it much faster to develop and test your app. When you run the `grunt` command the Vulcanize tool will start up and watch for file changes.
 
 ## Resources
 
