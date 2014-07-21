@@ -28,3 +28,6 @@ To make this process easier, we've included the [grunt-vulcanize](https://github
 ## Screenshot
 ![screenshot](https://raw.githubusercontent.com/vikasprogrammer/polymerchromeapp/master/assets/screenshot_1280_800.png)
 
+## Credit
+
+Big thanks to [vikasprogrammer](https://github.com/vikasprogrammer) for creating the [original example](https://github.com/vikasprogrammer/polymerchromeapp).
