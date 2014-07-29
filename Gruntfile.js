@@ -16,7 +16,8 @@ module.exports = function(grunt) {
     vulcanize: {
       default: {
         options: {
-          csp: true
+          csp: true,
+          strip: true
         },
         files: {
           'build.html': 'index.html'
