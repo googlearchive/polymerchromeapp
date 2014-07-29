@@ -10,13 +10,10 @@
   <link href="paper-dialog.html" rel="import">
   <style>
     body {
-      padding: 0;
-      margin: 0;
       -webkit-transform: translateZ(0);
       transform: translateZ(0);
       font-family: RobotoDraft, 'Helvetica Neue', Helvetica, Arial;
       font-size: 16px;
-      background: #eee;
       color: rgba(0, 0, 0, 0.87);
     }
 
@@ -33,7 +30,7 @@
       font-weight: bold;
     }
 
-    paper-button[default] {
+    paper-button[autofocus] {
       color: #4285f4;
     }
   </style>
@@ -48,7 +45,7 @@
 
     <paper-button label="More Info..." dismissive></paper-button>
     <paper-button label="Decline" affirmative></paper-button>
-    <paper-button label="Accept" affirmative default></paper-button>
+    <paper-button label="Accept" affirmative autofocus></paper-button>
 
   </paper-dialog>
 
@@ -61,7 +58,7 @@
 
     <paper-button label="More Info..." dismissive></paper-button>
     <paper-button label="Decline" affirmative></paper-button>
-    <paper-button label="Accept" affirmative default></paper-button>
+    <paper-button label="Accept" affirmative autofocus></paper-button>
 
   </paper-dialog>
 

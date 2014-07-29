@@ -256,10 +256,10 @@
       selectedProperty: '',
 
       /**
-       * Specifies the property to be used to set on the selected element
-       * to indicate its active state.
+       * Specifies the attribute to set on the selected element to indicate
+       * its active state.
        *
-       * @attribute selectedProperty
+       * @attribute selectedAttribute
        * @type string
        * @default 'active'
        */
@@ -1463,8 +1463,8 @@
        * icons are arranged into separate rows inside the image.
        *
        * @attribute width
-       * @type string
-       * @default ''
+       * @type number
+       * @default 0
        */
       width: 0,
 
@@ -1728,6 +1728,7 @@
         var icon = this.iconById(id);
         if (icon) {
           var content = icon.cloneNode(true);
+          content.removeAttribute('id');
           var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
           svg.setAttribute('viewBox', '0 0 ' + this.iconSize + ' ' +
               this.iconSize);

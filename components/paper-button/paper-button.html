@@ -67,7 +67,7 @@ role="button">
     </template>
 
     <div id="clip">
-      <div id="focusBg"></div>
+      <!-- <div id="focusBg"></div> -->
       <paper-ripple id="ripple"></paper-ripple>
       <div id="content">
         <template if="{{iconSrc || icon}}">
@@ -131,7 +131,7 @@ role="button">
       z: 1,
 
       attached: function() {
-        if (this.textContent) {
+        if (this.textContent && !this.textContent.match(/\s+/)) {
           console.warn('Using textContent to label the button is deprecated. Use the "label" property instead');
           this.label = this.textContent;
         }

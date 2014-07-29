@@ -36,15 +36,15 @@
 </head>
 <body unresolved>
 
-  <paper-button raisedButton onclick="document.querySelector('#toast1').show()">Discard Draft</paper-button>
+  <paper-button raisedButton onclick="document.querySelector('#toast1').show()" label="Discard Draft"></paper-button>
   
-  <paper-button raisedButton onclick="document.querySelector('#toast2').show()">Get Messages</paper-button>
+  <paper-button raisedButton onclick="document.querySelector('#toast2').show()" label="Get Messages"></paper-button>
   
-  <paper-button raisedButton onclick="document.querySelector('#toast3').show()">Send Message</paper-button>
+  <paper-button raisedButton onclick="document.querySelector('#toast3').show()" label="Send Message"></paper-button>
 
   <paper-toast id="toast1" text="Your draft has been discarded."></paper-toast>
   
-  <paper-toast id="toast2" text="Connection timed out. Showing limited messages.">
+  <paper-toast id="toast2" role="alert" text="Connection timed out. Showing limited messages.">
     <div style="color: #eeff41;" onclick="console.log('RETRY')">Retry</div>
   </paper-toast>
   
