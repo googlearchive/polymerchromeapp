@@ -14,7 +14,7 @@ To build the app run the following commands:
 
 ### Dealing with CSP
 
-Chrome Apps have a strict Content Security Policy (CSP) which prevents inline `script` elements. Using the [Vulcanize tool](www.polymer-project.org/articles/concatenating-web-components.html) with the `--csp` flag, we can strip all of the script elements out of our Polymer elements, and place them in an external `build.js` file.
+Chrome Apps have a strict Content Security Policy (CSP) which prevents inline `script` elements. Using the [Vulcanize tool](https://www.polymer-project.org/articles/concatenating-web-components.html) with the `--csp` flag, we can strip all of the script elements out of our Polymer elements, and place them in an external `build.js` file.
 
     vulcanize -o build.html index.html --csp
 
@@ -22,8 +22,8 @@ To make this process easier, we've included the [grunt-vulcanize](https://github
 
 ## Resources
 
-* [Chrome App](http://developer.chrome.com/apps)
-* [Polymer Project](http://www.polymer-project.org/)
+* [Chrome App](https://developer.chrome.com/apps)
+* [Polymer Project](https://www.polymer-project.org/)
 
 ## Screenshot
 ![screenshot](https://raw.githubusercontent.com/vikasprogrammer/polymerchromeapp/master/assets/screenshot_1280_800.png)
